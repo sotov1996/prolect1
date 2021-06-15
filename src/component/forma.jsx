@@ -1,24 +1,22 @@
-import React, { useState } from 'react'
-import { List } from './list'
+import React, { useState, useContext, useReducer } from 'react'
+import { Context } from '../context/context'
+import { reducer } from '../reducer/reducer'
 
 export const Forma = () => {
-    const [name, setName] = useState('')
-    const [items, setItems] = useState([])
+    const [data, dispatch] = useReducer(reducer, { name: '', click: false })
+
+    const { setItems } = useContext(Context)
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        if (!name) return
-        setItems((prev) => [...prev, name])
-        setName('')
+        setItems((prev) => [...prev, data.name])
+        dispatch({ type: 'set_name', payload: {click: true} })
     }
 
     return (
-        <>
-            <form onSubmit={handleSubmit}>
-                <input onChange={(e) => setName(e.target.value)} value={name} />
-                <button type="submit">Save</button>
-            </form>
-            <List items={items} setItems={setItems} />
-        </>
+        <form onSubmit={handleSubmit}>
+            <input onChange={(e) =>  dispatch({ type: 'set_name', payload: { name: e.target.value }})} value={data.name} />
+            <button type="submit">Save</button>
+        </form>
     );
 }
